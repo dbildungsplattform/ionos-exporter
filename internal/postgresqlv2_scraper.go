@@ -44,6 +44,10 @@ func PostgresqlV2CollectResources(cycletime int32) {
 
 func scrapePostgresqlV2() {
 	token := os.Getenv("IONOS_TOKEN")
+	if token == "" {
+		fmt.Fprintln(os.Stderr, "TOKEN environment variable is not set")
+		os.Exit(1)
+	}
 
 	endpoints := []string{
 		"https://postgresql.de-txl.ionos.com/v2/clusters",
@@ -96,25 +100,22 @@ func fetchPostgresqlV2Clusters(token, url string) (*PostgresqlV2Collection, erro
 		return nil, err
 	}
 
-	if token != "" {
-		req.Header.Set("Authorization", "Bearer "+token)
-	}
-
-client := &http.Client{Timeout: 10 * time.Second}
+	req.Header.Set("Authorization", "Bearer "+token)
+	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-	return nil, fmt.Errorf("unexpected status code %d from %s", resp.StatusCode, url)
-}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("unexpected status code %d from %s", resp.StatusCode, url)
+	}
 
-var collection PostgresqlV2Collection
-if err := json.NewDecoder(resp.Body).Decode(&collection); err != nil {
-	return nil, err
-}
+	var collection PostgresqlV2Collection
+	if err := json.NewDecoder(resp.Body).Decode(&collection); err != nil {
+		return nil, err
+	}
 
 	return &collection, nil
 }
