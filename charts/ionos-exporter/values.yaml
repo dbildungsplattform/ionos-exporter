@@ -29,6 +29,8 @@ ionos:
     enabled: false
   postgresql_v2:
     enabled: false
+  mariadb_v2:
+    enabled: false
   k8s:
     enabled: false
     fetch_interval: 120

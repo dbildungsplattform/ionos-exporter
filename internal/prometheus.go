@@ -37,11 +37,13 @@ func StartPrometheus(m *sync.RWMutex) {
 	s3Collector := NewS3Collector(s3Mutex)
 	pgCollector := NewPostgresCollector(pgMutex)
 	pgV2Collector := NewPostgresqlV2Collector()
+	mariadbV2Collector := NewMariaDBV2Collector()
 
 	prometheus.MustRegister(ionosCollector)
 	prometheus.MustRegister(s3Collector)
 	prometheus.MustRegister(pgCollector)
 	prometheus.MustRegister(pgV2Collector)
+	prometheus.MustRegister(mariadbV2Collector)
 	prometheus.MustRegister(HttpRequestsTotal)
 }
 

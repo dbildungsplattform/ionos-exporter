@@ -68,6 +68,10 @@ func main() {
 		go internal.PostgresqlV2CollectResources(ionos_api_cycle)
 	}
 
+	if internal.Must(internal.GetBoolEnv("IONOS_EXPORTER_MARIADB_V2_ENABLED", false)) {
+		go internal.MariaDBV2CollectResources(ionos_api_cycle)
+	}
+
 	internal.PrintDCResources(m)
 	internal.StartPrometheus(m)
 	http.Handle("/metrics", promhttp.Handler())
